@@ -1,11 +1,10 @@
+use crate::cli::TauriCommand;
+use eyre::{Context, Result};
 use std::{
     fs,
     path::{Path, PathBuf},
     process::Command,
 };
-use crate::cli::TauriCommand;
-use eyre::{Context, Result};
-
 
 pub fn start(
     project_dir: PathBuf,
@@ -24,12 +23,16 @@ pub fn start(
 
     let src_tauri_dir = project_dir.join("src-tauri");
 
+    let temp_target_project = project_dir
+        .join(project_dir.file_name().unwrap())
+        .join("src-tauri/target");
+
     let mut cmd = Command::new("cargo");
     cmd.arg("tauri").arg(&command);
     cmd.args(&tauri_args);
     cmd.current_dir(&src_tauri_dir);
 
-    cmd.env("CARGO_TARGET_DIR", &temp_target);
+    cmd.env("CARGO_TARGET_DIR", &temp_target_project);
 
     let status = cmd.status().context("failed to spawn `cargo tauri`")?;
     if !status.success() {

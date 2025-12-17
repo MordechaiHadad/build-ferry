@@ -67,9 +67,7 @@ pub enum Cli {
 
 impl Cli {
     pub fn has_targets(&self, config: &Config) -> bool {
-        if config.temp_target.is_some() && config.final_target.is_some() {
-            return true;
-        }
+        dbg!(self, config);
         match self {
             Cli::Build {
                 temp_target,
@@ -80,8 +78,11 @@ impl Cli {
                 temp_target,
                 final_target,
                 ..
-            } => temp_target.is_some() && final_target.is_some(),
-        }
+            } if temp_target.is_some() && final_target.is_some() => return true,
+            _ => {}
+        };
+
+        config.temp_target.is_some() && config.final_target.is_some()
     }
 }
 
