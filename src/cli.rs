@@ -158,7 +158,7 @@ pub fn resolve_config(project_dir: &Path) -> Config {
 fn load_global_config() -> Result<Config> {
     let config_path = dirs::config_dir()
         .context("could not find config directory")?
-        .join("fast-target")
+        .join("build-ferry")
         .join("config.toml");
 
     let content = fs::read_to_string(&config_path)?;
@@ -166,7 +166,7 @@ fn load_global_config() -> Result<Config> {
 }
 
 fn load_project_config(project_dir: &Path) -> Result<Config> {
-    let config_path = project_dir.join(".fast-target.toml");
+    let config_path = project_dir.join(".build-ferry.toml");
     let content = fs::read_to_string(&config_path)?;
     toml::from_str(&content).context("failed to parse project config")
 }
