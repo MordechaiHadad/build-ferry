@@ -13,7 +13,7 @@ pub fn start(
     command: TauriCommand,
     tauri_args: Vec<String>,
 ) -> Result<()> {
-    let command = match command {
+    let command_str = match command {
         TauriCommand::Dev => "dev",
         TauriCommand::Build => "build",
     };
@@ -28,7 +28,7 @@ pub fn start(
         .join("src-tauri/target");
 
     let mut cmd = Command::new("cargo");
-    cmd.arg("tauri").arg(&command);
+    cmd.arg("tauri").arg(&command_str);
     cmd.args(&tauri_args);
     cmd.current_dir(&src_tauri_dir);
 
@@ -36,10 +36,12 @@ pub fn start(
 
     let status = cmd.status().context("failed to spawn `cargo tauri`")?;
     if !status.success() {
-        eyre::bail!("cargo tauri {command} failed with status {status}");
+        eyre::bail!("cargo tauri {command_str} failed with status {status}");
     }
 
-    mirror_dir(&temp_target, &final_target)?;
+    if command == TauriCommand::Build {
+        mirror_dir(&temp_target, &final_target)?;
+    }
 
     Ok(())
 }

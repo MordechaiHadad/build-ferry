@@ -9,7 +9,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::modules::tauri;
 
-#[derive(Debug, Clone, Copy, ValueEnum)]
+#[derive(Debug, Clone, Copy, ValueEnum, PartialEq)]
 pub enum TauriCommand {
     Dev,
     Build,
