@@ -1,4 +1,4 @@
-use crate::cli::TauriCommand;
+use crate::{cli::TauriCommand, modules::create_temp_ferry};
 use eyre::{Context, Result};
 use std::{
     fs,
@@ -23,9 +23,7 @@ pub fn start(
 
     let src_tauri_dir = project_dir.join("src-tauri");
 
-    let temp_target_project = project_dir
-        .join(project_dir.file_name().unwrap())
-        .join("src-tauri/target");
+    let temp_target_project = create_temp_ferry(&temp_target, &project_dir).join("src-tauri/target");
 
     let mut cmd = Command::new("cargo");
     cmd.arg("tauri").arg(&command_str);
