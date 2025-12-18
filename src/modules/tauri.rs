@@ -1,7 +1,7 @@
 use crate::{cli::TauriCommand, modules::create_temp_ferry};
 use eyre::{Context, Result};
 use std::{
-    fs,
+    env, fs,
     path::{Path, PathBuf},
     process::Command,
 };
@@ -21,9 +21,13 @@ pub fn start(
     fs::create_dir_all(&temp_target)
         .with_context(|| format!("failed to create temp target dir {}", temp_target.display()))?;
 
-    let src_tauri_dir = project_dir.join("src-tauri");
+    let src_tauri_dir = if project_dir.is_absolute() {
+        project_dir.join("src-tauri")
+    } else {
+        env::current_dir()?.join(&project_dir).join("src-tauri")
+    };
 
-    let temp_target_project = create_temp_ferry(&temp_target, &project_dir).join("src-tauri/target");
+    let temp_target_project = create_temp_ferry(temp_target, project_dir).join("src-tauri/target");
 
     let mut cmd = Command::new("cargo");
     cmd.arg("tauri").arg(&command_str);
@@ -38,7 +42,7 @@ pub fn start(
     }
 
     if command == TauriCommand::Build {
-        mirror_dir(&temp_target, &final_target)?;
+        mirror_dir(&temp_target_project, &final_target)?;
     }
 
     Ok(())

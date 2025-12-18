@@ -67,7 +67,6 @@ pub enum Cli {
 
 impl Cli {
     pub fn has_targets(&self, config: &Config) -> bool {
-        dbg!(self, config);
         match self {
             Cli::Build {
                 temp_target,
